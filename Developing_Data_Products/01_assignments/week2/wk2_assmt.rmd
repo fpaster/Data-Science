@@ -1,0 +1,53 @@
+---
+title: "Creating Data Products"
+author: "FPA"
+date: "Sunday, November 13, 2016"
+output: html_document
+---
+
+```{r, echo=FALSE, results='hide'}
+suppressWarnings(library(leaflet))
+
+
+setwd("C:/Users/DE-84113/Documents/004_schulungen/2016/11_CreatingDataProducts/00_repo/Data-Science/Developing_Data_Products/01_assignments/week2/")
+
+#https://www.data.gv.at/katalog/dataset/stadt-wien_trinkbrunnenstandortewien
+fountains <- read.csv("fountain_data.csv", header = T)
+
+names(fountains)
+
+test <- fountains$SHAPE[1]
+
+splitted <- strsplit(as.character(fountains$SHAPE), " ")
+
+head(splitted)
+
+library(plyr)
+splittedDf <- adply(splitted, 1) 
+
+names(splittedDf) <- c("nr", "desrc", "lng", "lat")
+head(splittedDf)
+
+#get rid of brackets in data
+splittedDf$lng  <- gsub("\\(", "", splittedDf$lng)
+splittedDf$lat  <- gsub("\\)", "", splittedDf$lat)
+
+splittedDf[,c("lat", "lng")]
+head(splittedDf[,c("lat", "lng")])
+```
+
+Geo data from drinking fountains in Vienna, Austria.
+https://www.data.gv.at/katalog/dataset/stadt-wien_trinkbrunnenstandortewien
+```{r, echo=T}
+head(splittedDf[,c("lat", "lng")])
+```
+
+```{r, echo=FALSE}
+myMap <- splittedDf[,c("lat", "lng")] %>%
+    leaflet() %>%
+    addTiles() %>%
+    addMarkers()
+
+myMap
+
+```
